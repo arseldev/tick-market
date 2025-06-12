@@ -11,15 +11,24 @@ def callback(data):
         latest_prices[data['exchange']] = data
 
 def display_loop():
+    all_exchanges = [
+        'Binance', 'Bybit', 'OKX', 'KuCoin',
+        'Indodax', 'Huobi', 'Gate.io', 'MEXC', 'Bitget'
+    ]
+
     while True:
         time.sleep(1)
         with lock:
             print("==== Snapshot ====")
-            for ex, val in latest_prices.items():
-                print(f"{val['exchange']} | {val['symbol']} | ${val['price']}")
+            for ex in all_exchanges:
+                if ex in latest_prices:
+                    val = latest_prices[ex]
+                    print(f"{val['exchange']} | {val['symbol']} | ${val['price']}")
+                else:
+                    print(f"{ex} | BTCUSDT | -")
             print("==================\n")
 
-# Jalankan display loop di background
+
 threading.Thread(target=display_loop, daemon=True).start()
 
 # Jalankan masing-masing exchange di thread sendiri
