@@ -17,7 +17,7 @@ def display_loop():
     ]
 
     while True:
-        time.sleep(1)
+        time.sleep(.1)
         with lock:
             print("==== Snapshot ====")
             for ex in all_exchanges:
