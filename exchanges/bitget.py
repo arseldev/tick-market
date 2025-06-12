@@ -1,32 +1,39 @@
 import websocket
 import json
-import time
 
 def start(callback):
-    def on_message(ws, message):
-        data = json.loads(message)
-        if data.get('event') == 'update':
-            for d in data['data']:
-                callback({
-                    'exchange': 'Bitget',
-                    'symbol': d['instId'],
-                    'price': d['lastPr']
-                })
-
     def on_open(ws):
-        ws.send(json.dumps({
+        sub_msg = {
             "op": "subscribe",
             "args": [{
                 "instType": "SPOT",
                 "channel": "ticker",
                 "instId": "BTCUSDT"
             }]
-        }))
+        }
+        ws.send(json.dumps(sub_msg))
 
-    ws = websocket.WebSocketApp("wss://ws.bitget.com/spot/v1/stream",
-        on_message=on_message,
+    def on_message(ws, message):
+        data = json.loads(message)
+        if data.get("action") == "snapshot" and "data" in data:
+            for item in data["data"]:
+                callback({
+                    "exchange": "Bitget",
+                    "symbol": item.get("instId"),
+                    "price": item.get("lastPr")
+                })
+
+    def on_error(ws, error):
+        print("[BITGET] Error:", error)
+
+    def on_close(ws, *args):
+        print("[BITGET] Closed")
+
+    ws = websocket.WebSocketApp(
+        "wss://ws.bitget.com/v2/ws/public",  # ✅ endpoint publik
         on_open=on_open,
-        on_error=lambda w,e: print("BITGET ERR:", e),
-        on_close=lambda w,c,m: print("Bitget Closed"))
-
+        on_message=on_message,
+        on_error=on_error,
+        on_close=on_close
+    )
     ws.run_forever()

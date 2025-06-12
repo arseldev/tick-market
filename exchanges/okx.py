@@ -2,7 +2,7 @@ import websocket
 import json
 
 def start(callback):
-    symbol = 'BTCUSDT'
+    symbol = 'BTC-USDT'  # OKX format harus pakai dash
     socket = "wss://ws.okx.com:8443/ws/v5/public"
 
     def on_open(ws):
@@ -27,8 +27,8 @@ def start(callback):
         print("[OKX] Connection closed")
 
     ws = websocket.WebSocketApp(socket,
-                                 on_open=on_open,
-                                 on_message=on_message,
-                                 on_error=on_error,
-                                 on_close=on_close)
+        on_open=on_open,
+        on_message=on_message,
+        on_error=on_error,
+        on_close=on_close)
     ws.run_forever()
