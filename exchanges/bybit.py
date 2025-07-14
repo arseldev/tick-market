@@ -1,14 +1,13 @@
 import websocket
 import json
 
-def start(callback):
-    symbol = 'btcusdt'
+def start(callback, symbol):
     socket = f"wss://stream.bybit.com/v5/public/linear"
 
     def on_open(ws):
         sub_msg = {
             "op": "subscribe",
-            "args": [f"tickers.{symbol.upper()}"]
+            "args": [f"tickers.{symbol}"]
         }
         ws.send(json.dumps(sub_msg))
 
@@ -17,7 +16,7 @@ def start(callback):
         if 'data' in data and isinstance(data['data'], dict):
             price = data['data'].get('lastPrice')
             if price:
-                callback({'exchange': 'Bybit', 'symbol': symbol.upper(), 'price': price})
+                callback({'exchange': 'Bybit', 'symbol': symbol, 'price': price})
 
     def on_error(ws, error):
         print("[Bybit] Error:", error)

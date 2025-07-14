@@ -2,6 +2,7 @@ from exchanges import binance, bybit, okx, kucoin, indodax, huobi, gateio, mexc,
 
 import time
 import threading
+import json
 
 latest_prices = {}
 lock = threading.Lock()
@@ -15,30 +16,44 @@ def display_loop():
         'Binance', 'Bybit', 'OKX', 'KuCoin',
         'Indodax', 'Huobi', 'Gate.io', 'MEXC', 'Bitget'
     ]
-
+    
     while True:
-        time.sleep(.5)
+        time.sleep(0.5)
+        snapshot = []
+
         with lock:
-            print("==== Snapshot ====")
             for ex in all_exchanges:
                 if ex in latest_prices:
                     val = latest_prices[ex]
-                    print(f"{val['exchange']} | {val['symbol']} | ${val['price']}")
+                    snapshot.append({
+                        "name": val['exchange'],
+                        "currency": val['symbol'],
+                        "price": val['price']
+                    })
                 else:
-                    print(f"{ex} | BTCUSDT | -")
-            print("==================\n")
+                    snapshot.append({
+                        "name": ex,
+                        "currency": "BTCUSDT",
+                        "price": "-"
+                    })
+
+        print(json.dumps(snapshot, indent=2))
 
 
 threading.Thread(target=display_loop, daemon=True).start()
 
-# Jalankan masing-masing exchange di thread sendiri
-threading.Thread(target=binance.start, args=(callback,), daemon=True).start()
+symbol = 'BTCUSDT'
+threading.Thread(target=binance.start, args=(callback,symbol.lower()), daemon=True).start()
 threading.Thread(target=bybit.start, args=(callback,), daemon=True).start()
-threading.Thread(target=okx.start, args=(callback,), daemon=True).start()
-threading.Thread(target=kucoin.start, args=(callback,), daemon=True).start()
+
+symbol_okx = 'BTC-USDT'
+threading.Thread(target=okx.start, args=(callback, symbol_okx), daemon=True).start()
+threading.Thread(target=kucoin.start, args=(callback,symbol), daemon=True).start()
 threading.Thread(target=indodax.start, args=(callback,), daemon=True).start()
-threading.Thread(target=huobi.start, args=(callback,), daemon=True).start()
-threading.Thread(target=gateio.start, args=(callback,), daemon=True).start()
+threading.Thread(target=huobi.start, args=(callback,symbol.lower()), daemon=True).start()
+
+symbol_gateio = "BTC_USDT"
+threading.Thread(target=gateio.start, args=(callback,symbol_gateio), daemon=True).start()
 threading.Thread(target=mexc.start, args=(callback,), daemon=True).start()
 threading.Thread(target=bitget.start, args=(callback,), daemon=True).start()
 

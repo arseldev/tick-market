@@ -2,7 +2,7 @@ import requests
 import time
 import threading
 
-def start(callback):
+def start(callback,symbol):
     def poll():
         while True:
             try:
@@ -10,7 +10,7 @@ def start(callback):
                 data = r.json()
                 callback({
                     'exchange': 'Indodax',
-                    'symbol': 'BTCUSDT',
+                    'symbol': symbol,
                     'price': data['ticker']['last']
                 })
             except Exception as e:

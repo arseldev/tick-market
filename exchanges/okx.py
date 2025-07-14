@@ -1,8 +1,7 @@
 import websocket
 import json
 
-def start(callback):
-    symbol = 'BTC-USDT'  # OKX format harus pakai dash
+def start(callback, symbol):
     socket = "wss://ws.okx.com:8443/ws/v5/public"
 
     def on_open(ws):

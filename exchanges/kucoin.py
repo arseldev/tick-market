@@ -14,7 +14,7 @@ def get_kucoin_ws_info():
         "endpoint": data["instanceServers"][0]["endpoint"]
     }
 
-def start(callback):
+def start(callback, symbol):
     info = get_kucoin_ws_info()
     token = info["token"]
     endpoint = info["endpoint"]
@@ -27,7 +27,7 @@ def start(callback):
                 callback({
                     'exchange': 'KuCoin',
                     'price': ticker.get('price'),
-                    'symbol': 'BTCUSDT'
+                    'symbol': symbol
                 })
 
     def on_open(ws):

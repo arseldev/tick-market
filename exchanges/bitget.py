@@ -1,14 +1,14 @@
 import websocket
 import json
 
-def start(callback):
+def start(callback, symbol):
     def on_open(ws):
         sub_msg = {
             "op": "subscribe",
             "args": [{
                 "instType": "SPOT",
                 "channel": "ticker",
-                "instId": "BTCUSDT"
+                "instId": symbol
             }]
         }
         ws.send(json.dumps(sub_msg))

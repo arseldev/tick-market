@@ -2,7 +2,7 @@ import websocket
 import json
 import time
 
-def start(callback):
+def start(callback, symbol):
     def on_message(ws, message):
         data = json.loads(message)
         if data.get("event") == "update" and data.get("channel") == "spot.tickers":
@@ -18,7 +18,7 @@ def start(callback):
             "time": int(time.time()),
             "channel": "spot.tickers",
             "event": "subscribe",
-            "payload": ["BTC_USDT"]
+            "payload": [symbol]
         }
         ws.send(json.dumps(subscribe_msg))
 

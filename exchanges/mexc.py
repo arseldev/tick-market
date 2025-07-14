@@ -1,11 +1,11 @@
 import websocket
 import json
 
-def start(callback):
+def start(callback, symbol):
     def on_open(ws):
         sub = {
             "method": "SUBSCRIPTION",
-            "params": ["spot@public.deals.v3.api@BTCUSDT"],
+            "params": [f"spot@public.deals.v3.api@{symbol}"],
             "id": 1
         }
         ws.send(json.dumps(sub))
@@ -13,11 +13,10 @@ def start(callback):
     def on_message(ws, msg):
         try:
             data = json.loads(msg)
-            if data.get("c") == "spot@public.deals.v3.api@BTCUSDT":
+            if data.get("c") == f"spot@public.deals.v3.api@{symbol}":
                 deals = data.get("d", {}).get("deals", [])
                 if deals:
                     price = deals[0].get("p")
-                    symbol = data.get("s")
                     if price and symbol:
                         callback({
                             "exchange": "MEXC",

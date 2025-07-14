@@ -2,7 +2,7 @@ import websocket
 import json
 import gzip
 
-def start(callback):
+def start(callback, symbol):
     def on_message(ws, message):
         data = json.loads(gzip.decompress(message).decode())
         if 'tick' in data:
@@ -17,7 +17,7 @@ def start(callback):
     def on_open(ws):
         ws.send(json.dumps({
             "sub": "market.btcusdt.ticker",
-            "id": "btcusdt"
+            "id": symbol
         }))
 
     ws = websocket.WebSocketApp("wss://api.huobi.pro/ws",
