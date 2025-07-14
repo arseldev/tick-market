@@ -16,7 +16,7 @@ def start(callback, symbol):
 
     def on_open(ws):
         ws.send(json.dumps({
-            "sub": "market.btcusdt.ticker",
+            "sub": f"market.{symbol}.ticker",
             "id": symbol
         }))
 

@@ -2,12 +2,12 @@ import websocket
 import json
 
 def start(callback,symbol):
-    socket = f'wss://stream.binance.com:9443/ws/{symbol}@ticker'
+    socket = f'wss://stream.binance.com:9443/ws/{symbol.lower()}@ticker'
 
     def on_message(ws, message):
         data = json.loads(message)
         price = data['c']
-        callback({'exchange': 'Binance', 'symbol': 'BTCUSDT', 'price': price})
+        callback({'exchange': 'Binance', 'symbol': symbol, 'price': price})
 
     def on_error(ws, error):
         print("[Binance] Error:", error)
